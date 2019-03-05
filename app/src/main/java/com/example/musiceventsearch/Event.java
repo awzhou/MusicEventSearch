@@ -1,12 +1,8 @@
 package com.example.musiceventsearch;
 
-
-import android.location.Location;
-
 import java.lang.reflect.Array;
 
-
-public class EventResponse {
+public class Event {
     private int id;
     private String type;
     private String uri;
@@ -19,7 +15,7 @@ public class EventResponse {
     private String status;
     private String ageRestriction;
 
-    public EventResponse() {
+    public Event() {
     }
 
     public int getId() {

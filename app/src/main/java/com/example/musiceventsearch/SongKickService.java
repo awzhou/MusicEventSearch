@@ -6,14 +6,15 @@ import retrofit2.http.Query;
 
 public interface SongKickService {
 
-    Call<EventResponse> searchByEvent(
+    @GET("api/3.0/events.json")
+    Call<ResultsPage> searchByEvent(
        @Query("apikey") String apiKey,
-       @Query("artist_name") String artistName,
-       @Query("location") String location,
-       @Query("min_date") String minDate,
-       @Query("max_date") String maxDate,
-       @Query("type") String type,
-       @Query("page") String page,
-       @Query("per_page") String perPage
+       @Query("artist_name") String artistName
+//       @Query("location") String location,
+//       @Query("min_date") String minDate,
+//       @Query("max_date") String maxDate,
+//       @Query("type") String type,
+//       @Query("page") String page,
+//       @Query("per_page") String perPage
     );
 }

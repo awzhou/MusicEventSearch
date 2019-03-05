@@ -7,7 +7,7 @@ public class ArtistResponse {
     private int id;
     private String displayName;
     private String uri;
-    private Array identifier;
+    private Identifier identifier;
     private Date onTourUntil;
 
     public ArtistResponse() {
@@ -37,11 +37,11 @@ public class ArtistResponse {
         this.uri = uri;
     }
 
-    public Array getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
 
-    public void setIdentifier(Array identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
 
