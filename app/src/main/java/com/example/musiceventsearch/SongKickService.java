@@ -7,7 +7,7 @@ import retrofit2.http.Query;
 public interface SongKickService {
 
     @GET("api/3.0/events.json")
-    Call<ResultsPage> searchByEvent(
+    Call<ResultsResponse> searchByEvent(
        @Query("apikey") String apiKey,
        @Query("artist_name") String artistName
 //       @Query("location") String location,

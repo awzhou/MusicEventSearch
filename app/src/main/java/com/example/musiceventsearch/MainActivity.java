@@ -1,5 +1,6 @@
 package com.example.musiceventsearch;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+
+import javax.xml.transform.Result;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonSubmit;
 
     private static final int PER_PAGE = 50;
+
+    private static final String EXTRA = "events";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,15 +85,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getValues() {
-        String artistNameQuery = editTextQuery.getText().toString();
-        for (int i = 0; i < artistNameQuery.length(); i++) {
-            if (artistNameQuery.substring(i, i).equals(" ")) {
-                artistName += "+";
-            }
-            else {
-                artistName += artistNameQuery.substring(i, i+ 1);
-            }
-        }
+        artistName = editTextQuery.getText().toString().toLowerCase();
 
         location = "sk:17835";
 
@@ -126,20 +123,23 @@ public class MainActivity extends AppCompatActivity {
         SongKickService service =
                 retrofit.create(SongKickService.class);
 
-        // Call<EventResponse> eventResponseCall =
-                // service.searchByEvent(API_KEY, artistName, location, minDate, maxDate, type, page, perPage);
-        Call<ResultsPage> resultsPageCall =
+        Call<ResultsResponse> resultsPageCall =
                 service.searchByEvent(API_KEY, artistName);
 
-        resultsPageCall.enqueue(new Callback<ResultsPage>() {
+        resultsPageCall.enqueue(new Callback<ResultsResponse>() {
             @Override
-            public void onResponse(Call<ResultsPage> call, Response<ResultsPage> response) {
-                List<Event> events = response.body().getResults();
+            public void onResponse(Call<ResultsResponse> call, Response<ResultsResponse> response) {
+                Results events = response.body().getResultsPage().getResults();
+
+                Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
+                startActivity(intent);
+
+                // Log.d("BODY", response.body().getResults() + "");
                 Log.d("ENQUEUE", "onResponse: " + events.toString());
             }
 
             @Override
-            public void onFailure(Call<ResultsPage> call, Throwable t) {
+            public void onFailure(Call<ResultsResponse> call, Throwable t) {
                 Log.d("ENQUEUE", "onFailure: " + t.getMessage());
             }
         });
