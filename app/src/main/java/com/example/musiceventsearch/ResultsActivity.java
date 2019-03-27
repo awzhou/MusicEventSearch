@@ -1,5 +1,6 @@
 package com.example.musiceventsearch;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
@@ -15,8 +16,6 @@ public class ResultsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
 
-        results = MainActivity.eve
-
         listViewResults = findViewById(R.id.listView_results);
         populateListView();
     }
@@ -24,6 +23,10 @@ public class ResultsActivity extends AppCompatActivity {
     private void populateListView() {
         ResultsAdapter adapter = new ResultsAdapter(ResultsActivity.this, R.layout.item_eventlist, results.getEvent());
         listViewResults.setAdapter(adapter);
+
+        Intent resultsIntent = getIntent();
+        results = resultsIntent.getParcelableExtra(MainActivity.EXTRA);
+
         Toast.makeText(ResultsActivity.this, "Data Successfully Loaded", Toast.LENGTH_SHORT).show();
     }
 }

@@ -5,8 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -36,16 +38,13 @@ public class MainActivity extends AppCompatActivity {
     private String perPage;
 
     private EditText editTextQuery;
-    // private EditText editTextWhere;
-    private EditText editTextStartDate;
-    private EditText editTextEndDate;
     private RadioGroup radioGroupEventType;
-    private EditText editTextPageNumber;
+    private ListView listViewResults;
     private Button buttonSubmit;
 
     private static final int PER_PAGE = 50;
 
-    private static final String EXTRA = "events";
+    public static final String EXTRA = "events";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,15 +66,8 @@ public class MainActivity extends AppCompatActivity {
                 if (artistName.length() == 0) {
                     Toast.makeText(MainActivity.this, "Please input a query.", Toast.LENGTH_SHORT).show();
                 }
-                else if ((minDate == null && maxDate != null) || (minDate != null && maxDate == null)) {
-                    Toast.makeText(MainActivity.this, "You must provide both a minimum date ad a maximum date.", Toast.LENGTH_SHORT).show();
-                }
                 else if (type == null) {
                     Toast.makeText(MainActivity.this, "Please select an event type.", Toast.LENGTH_SHORT).show();
-                }
-                else if (page == null) {
-                    page = 1 + "";
-                    searchEvents();
                 }
                 else {
                     searchEvents();
@@ -87,11 +79,6 @@ public class MainActivity extends AppCompatActivity {
     private void getValues() {
         artistName = editTextQuery.getText().toString().toLowerCase();
 
-        location = "sk:17835";
-
-        minDate = editTextStartDate.getText().toString();
-        maxDate = editTextEndDate.getText().toString();
-
         if(radioGroupEventType.getCheckedRadioButtonId()!=-1) {
             int id = radioGroupEventType.getCheckedRadioButtonId();
             View radioButton = radioGroupEventType.findViewById(id);
@@ -100,16 +87,13 @@ public class MainActivity extends AppCompatActivity {
             type = (String) btn.getText();
         }
 
-        page = editTextPageNumber.getText().toString();
         perPage = PER_PAGE + "";
     }
 
     private void wireWidgets() {
         editTextQuery = findViewById(R.id.editText_main_artist);
-        editTextStartDate = findViewById(R.id.editText_main_minDate);
-        editTextEndDate = findViewById(R.id.editText_main_maxDate);
         radioGroupEventType = findViewById(R.id.radioGroup);
-        editTextPageNumber = findViewById(R.id.editText_main_page);
+        listViewResults = findViewById(R.id.listView_main);
         buttonSubmit = findViewById(R.id.button_main_submit);
     }
 
@@ -129,10 +113,9 @@ public class MainActivity extends AppCompatActivity {
         resultsPageCall.enqueue(new Callback<ResultsResponse>() {
             @Override
             public void onResponse(Call<ResultsResponse> call, Response<ResultsResponse> response) {
-                Results events = response.body().getResultsPage().getResults();
+                List<Event> events = response.body().getResultsPage().getResults().getEvent();
 
-                Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
-                startActivity(intent);
+                populateListView(events);
 
                 // Log.d("BODY", response.body().getResults() + "");
                 Log.d("ENQUEUE", "onResponse: " + events.toString());
@@ -144,5 +127,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void populateListView(List<Event> events) {
+        ResultsAdapter adapter = new ResultsAdapter(MainActivity.this, R.layout.item_eventlist, events);
+        listViewResults.setAdapter(adapter);
     }
 }
